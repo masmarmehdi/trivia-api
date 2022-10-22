@@ -73,7 +73,7 @@ You will need to provide detailed documentation of your API endpoints including 
 
 ### Documentation Example
 
-`GET '/api/v1.0/categories'`
+`GET '/categories'`
 
 - Fetches a dictionary of categories in which the keys are the ids and the value is the corresponding string of the category
 - Request Arguments: None
@@ -90,6 +90,140 @@ You will need to provide detailed documentation of your API endpoints including 
 }
 ```
 
+`GET '/questions?page=<page_number>'`
+
+- Fetches a paginated dictionary of questions of all available categories
+- Request parameters (optional): page:int
+- Response example:
+```json
+{
+ "categories": {
+   "1": "Science", 
+   "2": "Art", 
+   "3": "Geography", 
+   "4": "History", 
+   "5": "Entertainment", 
+   "6": "Sports"
+ }, 
+ "current_category": null, 
+ "questions": [
+   {
+     "answer": "Leonardo da vinci", 
+     "category": 2, 
+     "difficulty": 2, 
+     "id": 5,
+     "question": "Who drew the Monalisa"
+   },  
+   {
+     "answer": "Ottawa", 
+     "category": 3, 
+     "difficulty": 1, 
+     "id": 16, 
+     "question": "What's the capital of Canada?"
+   }
+ ], 
+ "success": true, 
+ "total_questions": 2
+}
+```
+
+`DELETE '/questions/<question_id>'`
+
+- Delete an existing questions from the repository of available questions
+- Request arguments: question_id:int
+- Response example:
+```json
+{
+  "success": true,
+  "deleted": "28"
+}
+```
+
+`POST '/questions'`
+- Add a new question to available questions
+- Request body: question:string, answer:string, category:string, difficulty:int
+- Response example:
+```json
+{
+  "success": true,
+  "created": 14,
+  "questions": [
+    {
+      "answer": "Manchester city",
+      "category": 6,
+      "difficulty": 2,
+      "id": 14,
+      "question": "Who win the 2021/2022 english premier league?"
+    }
+   ],
+  "total_questions": 3
+}
+```
+
+`POST '/questions/search/'`
+- Fetches all questions where a substring matches the search term (not case-sensitive)
+- Request body: search_term:string
+- Response example:
+```json
+{
+  "success": true,
+  "questions": [
+    {
+      "answer": "Joe Biden",
+      "category": 4,
+      "difficulty": 2,
+      "id": 20,
+      "question": "Who's the current president of USA?"
+    }
+   ],
+  "total_questions": 1
+}
+```
+
+`GET '/categories/<int:category_id>/questions'`
+- Fetches a dictionary of questions for the specified category
+- Request argument: category_id:int
+- Response example:
+```json
+{
+  "success": true,
+  "questions": [
+    {
+      "answer": "Manchester city",
+      "category": 6,
+      "difficulty": 2,
+      "id": 14,
+      "question": "Who won the 2021/2022 english premier league?"
+    },
+    {
+      "answer": "Real Madrid",
+      "category": 6,
+      "difficulty": 2,
+      "id": 15,
+      "question": "Who won the 2021/2022 champions league?"
+    }
+   ],
+  "total_questions": 2,
+  "current_category": "Sports"
+}
+```
+
+`POST '/quizzes'`
+- Fetches one random question within a specified category
+- Request body: previous_question:array, quiz_category:{id:int, type:string}
+- Response example:
+```json
+{
+  "success": true,
+  "question": {
+      "answer": "Real Madrid",
+      "category": 6,
+      "difficulty": 2,
+      "id": 15,
+      "question": "Who won the 2021/2022 champions league?"
+   }
+}
+```
 ## Testing
 
 Write at least one test for the success and at least one error behavior of each endpoint using the unittest library.

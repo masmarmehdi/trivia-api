@@ -102,12 +102,14 @@ def create_app(test_config=None):
     def delete_question(question_id):
         try:
             question = Question.query.get(question_id)
-            question.delete()
-
-            return jsonify({
-                'success': True,
-                'deleted': question_id
-            })
+            if question: 
+                question.delete()
+                return jsonify({
+                    'success': True,
+                    'deleted': question_id
+                })
+            else:
+                abort(404)
         except:
             abort(422)
     """
@@ -209,19 +211,23 @@ def create_app(test_config=None):
     def play_quiz():
         try:
             body = request.get_json()
-
+            category_id = category['id']
             if 'quiz_category' not in body and 'previous_questions' not in body:
                 abort(422)
             
             category = body.get('quiz_category')
             previous_questions = body.get('previous_questions')
-
-            if category['type'] == 'click':
-                available_questions = Question.query.filter(Question.id.notin_((previous_questions))).all()
-            else:
-                available_questions = Question.query.filter_by(category=category['id']).filter(Question.id.notin_((previous_questions))).all()
+            current_question_not_in_previous = Question.id.notin_((previous_questions))
             
-            new_question = available_questions[random.randrange(0, len(available_questions))].format() if len(available_questions) > 0 else None
+            if category_id == 0:
+                available_questions = Question.query.filter(current_question_not_in_previous).all()
+            else:
+                available_questions = Question.query.filter_by(category=category_id).filter(current_question_not_in_previous).all()
+
+            random_question_pick = random.randrange(0, len(available_questions))
+
+            if len(available_questions) > 0:
+                new_question  = available_questions[random_question_pick].format()
 
             return jsonify({
                 'success': True,

@@ -208,14 +208,14 @@ def create_app(test_config=None):
     and shown whether they were correct or not.
     """
     @app.route('/quizzes', methods=['POST'])
-    def play_quiz():
+    def quiz():
         try:
             body = request.get_json()
-            category_id = category['id']
             if 'quiz_category' not in body and 'previous_questions' not in body:
                 abort(422)
             
             category = body.get('quiz_category')
+            category_id = category['id']
             previous_questions = body.get('previous_questions')
             current_question_not_in_previous = Question.id.notin_((previous_questions))
             
@@ -228,11 +228,12 @@ def create_app(test_config=None):
 
             if len(available_questions) > 0:
                 new_question  = available_questions[random_question_pick].format()
-
-            return jsonify({
-                'success': True,
-                'question': new_question
-            })
+                return jsonify({
+                    'success': True,
+                    'question': new_question
+                })
+            else:
+                abort(404)
         except:
             abort(422)
     """
